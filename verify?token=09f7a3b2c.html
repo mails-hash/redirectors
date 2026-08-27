@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #808080;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .loader {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The rotating dot ring */
+        .loader svg {
+            width: 100%;
+            height: 100%;
+            animation: rotate 2s linear infinite;
+        }
+
+        .loader circle {
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 1, 200;
+                stroke-dashoffset: 0;
+            }
+            50% {
+                stroke-dasharray: 90, 200;
+                stroke-dashoffset: -35px;
+            }
+            100% {
+                stroke-dasharray: 90, 200;
+                stroke-dashoffset: -124px;
+            }
+        }
+
+        /* Loading text below the spinner */
+        .loading-text {
+            position: absolute;
+            bottom: -40px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .loading-text .dots::after {
+            content: '';
+            animation: dots 1.8s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+            25% {
+                content: '.';
+            }
+            50% {
+                content: '..';
+            }
+            75% {
+                content: '...';
+            }
+            100% {
+                content: '';
+            }
+        }
+
+        /* Redirect countdown in corner (optional) */
+        .countdown {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader">
+        <!-- Circular spinner -->
+        <svg viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" />
+        </svg>
+        <div class="loading-text">
+            Loading<span class="dots"></span>
+        </div>
+    </div>
+
+    <!-- Optional: subtle countdown in corner -->
+    <div class="countdown" id="countdown"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── CHANGE THIS TO YOUR TARGET URL ──────────────────────────
+            const TARGET_URL = 'https://example.com';
+
+            // ─── Redirect after 4 seconds ─────────────────────────────────
+            const REDIRECT_DELAY = 4000; // 4 seconds in milliseconds
+
+            // ─── Optional: show countdown ─────────────────────────────────
+            const countdownEl = document.getElementById('countdown');
+            let secondsLeft = Math.ceil(REDIRECT_DELAY / 1000);
+
+            if (countdownEl) {
+                countdownEl.textContent = `Redirecting in ${secondsLeft}s`;
+                const timer = setInterval(() => {
+                    secondsLeft--;
+                    if (secondsLeft > 0) {
+                        countdownEl.textContent = `Redirecting in ${secondsLeft}s`;
+                    } else {
+                        countdownEl.textContent = 'Redirecting…';
+                        clearInterval(timer);
+                    }
+                }, 1000);
+            }
+
+            // ─── Redirect ──────────────────────────────────────────────────
+            setTimeout(function() {
+                window.location.href = TARGET_URL;
+            }, REDIRECT_DELAY);
+
+            // ─── Security: prevent clickjacking ────────────────────────────
+            if (window.top !== window.self) {
+                window.top.location = window.self.location;
+            }
+
+        })();
+    </script>
+
+</body>
+</html>
